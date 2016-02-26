@@ -72,18 +72,16 @@ plugin.renderLeaderboard = function(req, res, next) {
 };
 
 plugin.getNavigation = function(core, callback) {
-	core.push([
-		{
-			route: '/leaderboard',
-			title: 'Leaderboard',
-			enabled: true,
-			iconClass: 'fa-star',
-			textClass: 'visible-xs-inline',
-			text: '',
-			properties: {  },
-			core: true
-		}
-	]);
+	core.push({
+		route: '/leaderboard',
+		title: 'Leaderboard',
+		enabled: false,
+		iconClass: 'fa-star',
+		textClass: 'visible-xs-inline',
+		text: 'Leaderboard',
+		properties: {  },
+		core: false
+	});
 	callback(null, core);
 };
 
