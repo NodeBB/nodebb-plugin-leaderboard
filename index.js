@@ -78,10 +78,10 @@ plugin.getNavigation = function(core, callback) {
 			title: 'Leaderboard',
 			enabled: true,
 			iconClass: 'fa-star',
-		    textClass: 'visible-xs-inline',
-		    text: '',
-		    properties: {  },
-		    core: true
+			textClass: 'visible-xs-inline',
+			text: '',
+			properties: {  },
+			core: true
 		}
 	]);
 	callback(null, core);
