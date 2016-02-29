@@ -10,4 +10,6 @@
         { "hook": "filter:navigation.available", "method": "getNavigation"}
     ],
     "templates": "static/templates"
+    "languages": "languages",
+	"defaultLang": "en_GB"
 }
