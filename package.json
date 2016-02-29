@@ -1,6 +1,6 @@
 {
   "name": "nodebb-plugin-leaderboard",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Adds a daily/weekly/monthly leaderboard based on reputation",
   "main": "index.js",
   "repository": {
@@ -17,9 +17,7 @@
   ],
   "author": "Baris Usakli <baris@nodebb.org>",
   "license": "MIT",
-  "dependencies": {
-
-  },
+  "dependencies": {},
   "nbbpm": {
     "compatibility": "^0.7.0 || ^0.8.0 || ^0.9.0"
   }
