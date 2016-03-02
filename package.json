@@ -1,6 +1,6 @@
 {
   "name": "nodebb-plugin-leaderboard",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Adds a daily/weekly/monthly leaderboard based on reputation",
   "main": "index.js",
   "repository": {
