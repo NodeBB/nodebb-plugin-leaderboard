@@ -15,9 +15,9 @@ var plugin = {};
 
 var cronJobs = [];
 
-cronJobs.push(new cron('0 0 * * *', function() {db.delete('users:reputation:daily');}, null, false));
-cronJobs.push(new cron('0 0 * * 0', function() {db.delete('users:reputation:weekly');}, null, false));
-cronJobs.push(new cron('0 0 1 * *', function() {db.delete('users:reputation:monthly');}, null, false));
+cronJobs.push(new cron('0 0 17 * * *', function() {db.delete('users:reputation:daily');}, null, false));
+cronJobs.push(new cron('0 0 17 * * 0', function() {db.delete('users:reputation:weekly');}, null, false));
+cronJobs.push(new cron('0 0 17 1 * *', function() {db.delete('users:reputation:monthly');}, null, false));
 
 plugin.init = function(params, callback) {
 	var middlewares = [params.middleware.checkGlobalPrivacySettings];
