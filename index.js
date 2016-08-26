@@ -36,7 +36,7 @@ plugin.renderLeaderboard = function(req, res, next) {
 	var userData;
 	async.waterfall([
 		function (next) {
-			usersController.getUsers(set, req.uid, req.query.page, next);
+			usersController.getUsers(set, req.uid, req.query, next);
 		},
 		function (_userData, next) {
 			userData = _userData;
@@ -65,7 +65,7 @@ plugin.renderLeaderboard = function(req, res, next) {
 		}
 
 		userData.breadcrumbs = controllersHelpers.buildBreadcrumbs(breadcrumbs);
-		userData['route_users:reputation'] = true;
+		userData['section_sort-reputation'] = true;
 		userData.title = 'Leaderboard';
 		res.render('leaderboard', userData);
 	});
