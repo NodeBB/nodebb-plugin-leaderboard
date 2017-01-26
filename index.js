@@ -124,14 +124,14 @@ function updateLeaderboards(change, owner) {
 	}
 }
 
-plugin.activate = function(id) {
-	if (id === 'nodebb-plugin-leaderboard') {
+plugin.activate = function(data) {
+	if (data.id === 'nodebb-plugin-leaderboard') {
 		pubsub.publish('nodebb-plugin-leaderboard:activate');
 	}
 };
 
-plugin.deactivate = function(id) {
-	if (id === 'nodebb-plugin-leaderboard') {
+plugin.deactivate = function(data) {
+	if (data.id === 'nodebb-plugin-leaderboard') {
 		pubsub.publish('nodebb-plugin-leaderboard:deactivate');
 	}
 };
