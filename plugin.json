@@ -5,7 +5,6 @@
         { "hook": "action:post.upvote", "method": "onUpvote"},
         { "hook": "action:post.downvote", "method": "onDownvote"},
         { "hook": "action:post.unvote", "method": "onUnvote"},
-        { "hook": "action:plugin.activate", "method": "activate"},
         { "hook": "action:plugin.deactivate", "method": "deactivate"},
         { "hook": "filter:navigation.available", "method": "getNavigation"}
     ],

@@ -124,26 +124,15 @@ function updateLeaderboards(change, owner) {
 	}
 }
 
-plugin.activate = function(data) {
-	if (data.id === 'nodebb-plugin-leaderboard') {
-		pubsub.publish('nodebb-plugin-leaderboard:activate');
-	}
-};
-
 plugin.deactivate = function(data) {
 	if (data.id === 'nodebb-plugin-leaderboard') {
 		pubsub.publish('nodebb-plugin-leaderboard:deactivate');
 	}
 };
 
-pubsub.on('nodebb-plugin-leaderboard:activate', function() {
-	reStartCronJobs();
-});
-
 pubsub.on('nodebb-plugin-leaderboard:deactivate', function() {
 	stopCronJobs();
 });
-
 
 function reStartCronJobs() {
 	if (nconf.get('isPrimary') === 'true') {
