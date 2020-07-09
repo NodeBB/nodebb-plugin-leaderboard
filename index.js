@@ -135,7 +135,7 @@ pubsub.on('nodebb-plugin-leaderboard:deactivate', function() {
 });
 
 function reStartCronJobs() {
-	if (nconf.get('isPrimary') === 'true') {
+	if (nconf.get('isPrimary')) {
 		stopCronJobs();
 		cronJobs.forEach(function(job) {
 			job.start();
@@ -144,7 +144,7 @@ function reStartCronJobs() {
 }
 
 function stopCronJobs() {
-	if (nconf.get('isPrimary') === 'true') {
+	if (nconf.get('isPrimary')) {
 		cronJobs.forEach(function(job) {
 			job.stop();
 		});
