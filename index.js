@@ -6,12 +6,13 @@ var cron = require.main.require('cron').CronJob;
 var nconf = require.main.require('nconf');
 
 var db = require.main.require('./src/database');
+var privileges = require.main.require('./src/privileges');
 var helpers = require.main.require('./src/routes/helpers');
 var controllersHelpers = require.main.require('./src/controllers/helpers');
 var usersController = require.main.require('./src/controllers/users');
 var pubsub = require.main.require('./src/pubsub');
 
-var plugin = {};
+var plugin = module.exports ;
 
 var cronJobs = [];
 
@@ -20,13 +21,18 @@ cronJobs.push(new cron('0 0 17 * * 0', function() {db.delete('users:reputation:w
 cronJobs.push(new cron('0 0 17 1 * *', function() {db.delete('users:reputation:monthly');}, null, false));
 
 plugin.init = function(params, callback) {
-	var middlewares = [params.middleware.checkGlobalPrivacySettings];
-	helpers.setupPageRoute(params.router, '/leaderboard/:term?', params.middleware, middlewares, plugin.renderLeaderboard);
+	helpers.setupPageRoute(params.router, '/leaderboard/:term?', params.middleware, [], plugin.renderLeaderboard);
 	reStartCronJobs();
 	callback();
 };
 
 plugin.renderLeaderboard = function(req, res, next) {
+	const canView = await privileges.global.can('view:users', req.uid);
+	if (!canView) {
+		controllersHelpers.notAllowed(req, res);
+		return;
+	}
+
 	var term = req.params.term || '';
 	if (term === 'alltime') {
 		term = '';
@@ -150,8 +156,3 @@ function stopCronJobs() {
 		});
 	}
 }
-
-
-
-module.exports = plugin;
-
