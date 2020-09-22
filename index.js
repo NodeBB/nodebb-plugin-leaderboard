@@ -1,20 +1,19 @@
 
 'use strict';
 
-var async = require.main.require('async');
-var cron = require.main.require('cron').CronJob;
-var nconf = require.main.require('nconf');
+const cron = require.main.require('cron').CronJob;
+const nconf = require.main.require('nconf');
 
-var db = require.main.require('./src/database');
-var privileges = require.main.require('./src/privileges');
-var helpers = require.main.require('./src/routes/helpers');
-var controllersHelpers = require.main.require('./src/controllers/helpers');
-var usersController = require.main.require('./src/controllers/users');
-var pubsub = require.main.require('./src/pubsub');
+const db = require.main.require('./src/database');
+const privileges = require.main.require('./src/privileges');
+const helpers = require.main.require('./src/routes/helpers');
+const controllersHelpers = require.main.require('./src/controllers/helpers');
+const usersController = require.main.require('./src/controllers/users');
+const pubsub = require.main.require('./src/pubsub');
 
-var plugin = module.exports ;
+const plugin = module.exports;
 
-var cronJobs = [];
+const cronJobs = [];
 
 cronJobs.push(new cron('0 0 17 * * *', function() {db.delete('users:reputation:daily');}, null, false));
 cronJobs.push(new cron('0 0 17 * * 0', function() {db.delete('users:reputation:weekly');}, null, false));
@@ -26,58 +25,43 @@ plugin.init = function(params, callback) {
 	callback();
 };
 
-plugin.renderLeaderboard = function(req, res, next) {
+plugin.renderLeaderboard = async function(req, res) {
 	const canView = await privileges.global.can('view:users', req.uid);
 	if (!canView) {
 		controllersHelpers.notAllowed(req, res);
 		return;
 	}
 
-	var term = req.params.term || '';
+	let term = req.params.term || '';
 	if (term === 'alltime') {
 		term = '';
 	}
-	var set = 'users:reputation' + (term ? ':' + term : '');
+	const set = 'users:reputation' + (term ? ':' + term : '');
 
-	var userData;
-	async.waterfall([
-		function (next) {
-			usersController.getUsers(set, req.uid, req.query, next);
-		},
-		function (_userData, next) {
-			userData = _userData;
-			var uids = userData.users.map(function(user) {
-				return user && user.uid;
-			});
-			db.sortedSetScores(set, uids, next);
-		},
-		function (scores, next) {
-			userData.users.forEach(function(user, index) {
-				if (user) {
-					user.reputation = scores[index] || 0;
-				}
-			});
-			next(null, userData);
+	const userData = await usersController.getUsers(set, req.uid, req.query);
+	const uids = userData.users.map(user => user && user.uid);
+	const scores = await db.sortedSetScores(set, uids);
+	userData.users.forEach(function(user, index) {
+		if (user) {
+			user.reputation = scores[index] || 0;
 		}
-	], function(err, userData) {
-		if (err) {
-			return next(err);
-		}
-		var breadcrumbs = [{text: term ? (term.charAt(0).toUpperCase() + term.slice(1)) : 'Leaderboard'}];
-
-		if (term) {
-			breadcrumbs.unshift({text: 'Leaderboard', url: '/leaderboard'});
-			userData[term] = true;
-		}
-
-		userData.breadcrumbs = controllersHelpers.buildBreadcrumbs(breadcrumbs);
-		userData['section_sort-reputation'] = true;
-		userData.title = 'Leaderboard';
-		res.render('leaderboard', userData);
 	});
+	const breadcrumbs = [{
+		text: term ? (term.charAt(0).toUpperCase() + term.slice(1)) : 'Leaderboard'
+	}];
+
+	if (term) {
+		breadcrumbs.unshift({text: 'Leaderboard', url: '/leaderboard'});
+		userData[term] = true;
+	}
+
+	userData.breadcrumbs = controllersHelpers.buildBreadcrumbs(breadcrumbs);
+	userData['section_sort-reputation'] = true;
+	userData.title = 'Leaderboard';
+	res.render('leaderboard', userData);
 };
 
-plugin.getNavigation = function(core, callback) {
+plugin.getNavigation = async function(core) {
 	core.push({
 		route: '/leaderboard',
 		title: 'Leaderboard',
@@ -88,7 +72,7 @@ plugin.getNavigation = function(core, callback) {
 		properties: {  },
 		core: false
 	});
-	callback(null, core);
+	return core;
 };
 
 plugin.onUpvote = function(data) {
