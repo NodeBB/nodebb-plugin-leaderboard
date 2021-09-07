@@ -46,18 +46,23 @@ plugin.renderLeaderboard = async function (req, res) {
 		}
 	});
 
+	const termToLabelMap = {
+		daily: '[[recent:day]]',
+		weekly: '[[recent:week]]',
+		monthly: '[[recent:month]]',
+	};
 	const breadcrumbs = [{
-		text: term ? (term.charAt(0).toUpperCase() + term.slice(1)) : 'Leaderboard',
+		text: term ? termToLabelMap[term] : '[[leaderboard:leaderboard]]',
 	}];
 
 	if (term) {
-		breadcrumbs.unshift({ text: 'Leaderboard', url: '/leaderboard' });
+		breadcrumbs.unshift({ text: '[[leaderboard:leaderboard]]', url: '/leaderboard' });
 		userData[term] = true;
 	}
 
 	userData.breadcrumbs = controllersHelpers.buildBreadcrumbs(breadcrumbs);
 	userData['section_sort-reputation'] = true;
-	userData.title = 'Leaderboard';
+	userData.title = '[[leaderboard:leaderboard]]';
 
 	res.render('leaderboard', userData);
 };
@@ -65,11 +70,11 @@ plugin.renderLeaderboard = async function (req, res) {
 plugin.getNavigation = async function (core) {
 	core.push({
 		route: '/leaderboard',
-		title: 'Leaderboard',
+		title: '[[leaderboard:leaderboard]]',
 		enabled: false,
 		iconClass: 'fa-star',
 		textClass: 'visible-xs-inline',
-		text: 'Leaderboard',
+		text: '[[leaderboard:leaderboard]]',
 		properties: {},
 		core: false,
 	});

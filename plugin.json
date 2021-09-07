@@ -8,5 +8,6 @@
         { "hook": "action:plugin.deactivate", "method": "deactivate"},
         { "hook": "filter:navigation.available", "method": "getNavigation"}
     ],
-    "templates": "static/templates"
+    "templates": "static/templates",
+    "languages": "languages"
 }
