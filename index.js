@@ -3,28 +3,28 @@
 const cron = require.main.require('cron').CronJob;
 const nconf = require.main.require('nconf');
 
-const db = require.main.require('./src/database');
-const privileges = require.main.require('./src/privileges');
-const helpers = require.main.require('./src/routes/helpers');
 const controllersHelpers = require.main.require('./src/controllers/helpers');
 const usersController = require.main.require('./src/controllers/users');
+const db = require.main.require('./src/database');
+const privileges = require.main.require('./src/privileges');
 const pubsub = require.main.require('./src/pubsub');
+const helpers = require.main.require('./src/routes/helpers');
 
-const plugin = module.exports;
 
 const cronJobs = [];
-
 cronJobs.push(new cron('0 0 17 * * *', (() => { db.delete('users:reputation:daily'); }), null, false));
 cronJobs.push(new cron('0 0 17 * * 0', (() => { db.delete('users:reputation:weekly'); }), null, false));
 cronJobs.push(new cron('0 0 17 1 * *', (() => { db.delete('users:reputation:monthly'); }), null, false));
 
-plugin.init = function (params, callback) {
-	helpers.setupPageRoute(params.router, '/leaderboard/:term?', params.middleware, [], plugin.renderLeaderboard);
+
+const LeaderboardPlugin = {};
+
+LeaderboardPlugin.init = async function (params) {
+	helpers.setupPageRoute(params.router, '/leaderboard/:term?', params.middleware, [], LeaderboardPlugin.renderLeaderboard);
 	reStartCronJobs();
-	callback();
 };
 
-plugin.renderLeaderboard = async function (req, res) {
+LeaderboardPlugin.renderLeaderboard = async function (req, res) {
 	const canView = await privileges.global.can('view:users', req.uid);
 	if (!canView) {
 		controllersHelpers.notAllowed(req, res);
@@ -67,7 +67,7 @@ plugin.renderLeaderboard = async function (req, res) {
 	res.render('leaderboard', userData);
 };
 
-plugin.getNavigation = async function (core) {
+LeaderboardPlugin.getNavigation = async function (core) {
 	core.push({
 		route: '/leaderboard',
 		title: '[[leaderboard:leaderboard]]',
@@ -81,7 +81,7 @@ plugin.getNavigation = async function (core) {
 	return core;
 };
 
-plugin.onUpvote = function (data) {
+LeaderboardPlugin.onUpvote = function (data) {
 	let change = 0;
 	if (data.current === 'unvote') {
 		change = 1;
@@ -91,7 +91,7 @@ plugin.onUpvote = function (data) {
 	updateLeaderboards(change, data.owner);
 };
 
-plugin.onDownvote = function (data) {
+LeaderboardPlugin.onDownvote = function (data) {
 	let change = 0;
 	if (data.current === 'unvote') {
 		change = -1;
@@ -101,7 +101,7 @@ plugin.onDownvote = function (data) {
 	updateLeaderboards(change, data.owner);
 };
 
-plugin.onUnvote = function (data) {
+LeaderboardPlugin.onUnvote = function (data) {
 	let change = 0;
 	if (data.current === 'upvote') {
 		change = -1;
@@ -119,7 +119,7 @@ function updateLeaderboards(change, owner) {
 	}
 }
 
-plugin.deactivate = function (data) {
+LeaderboardPlugin.deactivate = function (data) {
 	if (data.id === 'nodebb-plugin-leaderboard') {
 		pubsub.publish('nodebb-plugin-leaderboard:deactivate');
 	}
@@ -145,3 +145,5 @@ function stopCronJobs() {
 		});
 	}
 }
+
+module.exports = LeaderboardPlugin;
