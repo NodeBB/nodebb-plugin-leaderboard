@@ -13,7 +13,7 @@
 				<div class="fw-semibold text-truncate" title="{./displayname}">{./displayname}</div>
 			</div>
 			<div class="text-xs text-muted text-truncate">
-				{./reputation}
+				<span>{formattedNumber(./reputation)}</span>
 			</div>
 		</div>
 	</a>
