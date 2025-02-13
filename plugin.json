@@ -6,7 +6,9 @@
         { "hook": "action:post.downvote", "method": "onDownvote"},
         { "hook": "action:post.unvote", "method": "onUnvote"},
         { "hook": "action:plugin.deactivate", "method": "deactivate"},
-        { "hook": "filter:navigation.available", "method": "getNavigation"}
+        { "hook": "filter:navigation.available", "method": "getNavigation"},
+        { "hook": "filter:widgets.getWidgets", "method": "defineWidgets" },
+        { "hook": "filter:widget.render:leaderboard", "method": "renderLeaderboardWidget" }
     ],
     "templates": "templates",
     "languages": "languages"
