@@ -7,13 +7,11 @@
 		</div>
 
 
-		<div class="d-flex flex-column gap-1 text-truncate">
-			<div class="d-flex gap-2">
-				<div>{buildAvatar(@value, "24px", true, "flex-shrink-0")}</div>
+		<div class="d-flex gap-2 ff-secondary align-items-start text-start ff-base">
+			{buildAvatar(@value, "24px", true, "flex-shrink-0")}
+			<div class="d-flex flex-column gap-1 text-truncate">
 				<div class="fw-semibold text-truncate" title="{./displayname}">{./displayname}</div>
-			</div>
-			<div class="text-xs text-muted text-truncate">
-				<span>{formattedNumber(./reputation)}</span>
+				<div class="text-xs text-muted text-truncate">{formattedNumber(./reputation)}</div>
 			</div>
 		</div>
 	</a>
